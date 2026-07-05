@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writesonic × Bhanu Kumar · Proof of Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:       #08090e;
+  --bg2:      #0f1119;
+  --bg3:      #161b27;
+  --bg4:      #1d2331;
+  --bg5:      #252d3a;
+  --bdr:      rgba(255,255,255,0.06);
+  --bmd:      rgba(255,255,255,0.11);
+  --blg:      rgba(255,255,255,0.18);
+  --t1:       #f0f2f7;
+  --t2:       #8a8f9b;
+  --t3:       #464c5a;
+  --signal:   #1dd4bf;
+  --signal-dim: rgba(29,212,191,0.08);
+  --signal-glow: rgba(29,212,191,0.20);
+  --signal-t: #5eddd5;
+  --accent:   #00d9ff;
+  --accent-dim: rgba(0,217,255,0.08);
+}
+
+html{scroll-behavior:smooth;scroll-padding-top:64px;}
+body{
+  background:var(--bg);color:var(--t1);
+  font-family:'Manrope',system-ui,sans-serif;
+  font-size:16px;line-height:1.7;font-weight:400;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(800px 500px at 12% 8%, rgba(29,212,191,0.05), transparent 55%),
+    radial-gradient(650px 480px at 94% 12%, rgba(0,217,255,0.04), transparent 58%);
+}
+
+::selection{background:var(--signal-dim);color:var(--t1);}
+
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+
+.pbar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--signal),var(--accent));z-index:500;width:0%;transition:width 0.1s linear;}
+
+.nav{
+  position:sticky;top:0;z-index:300;
+  background:rgba(8,9,14,0.92);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--bdr);
+  padding:0 5vw;
+}
+.nav-i{
+  max-width:1180px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;gap:16px;
+}
+.nav-brand{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--t1);letter-spacing:0.02em;white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.nav-brand .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--signal);
+  box-shadow:0 0 0 0 var(--signal-glow);
+  animation:dotpulse 2.6s ease-in-out infinite;
+}
+@keyframes dotpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.45;transform:scale(0.72);}}
+.nav-brand b{font-weight:500;}
+.nav-brand span{color:var(--t3);}
+
+.nav-links{display:flex;gap:2px;flex-wrap:wrap;}
+.np{
+  font-size:11.5px;font-weight:500;
+  padding:6px 12px;border-radius:6px;
+  border:1px solid transparent;
+  color:var(--t2);background:transparent;
+  text-decoration:none;transition:all 0.13s;white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;letter-spacing:0.01em;
+}
+.np:hover{border-color:var(--bdr);color:var(--t1);background:var(--bg3);}
+.np.cta{
+  background:var(--signal);border-color:var(--signal);
+  color:#07140f;font-weight:600;margin-left:6px;
+}
+.np.cta:hover{opacity:0.88;}
+
+.hbg{
+  display:none;flex-direction:column;gap:5px;
+  cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0;
+}
+.hbg span{display:block;width:20px;height:1.5px;background:var(--t1);border-radius:2px;transition:transform .3s,opacity .3s;}
+.hbg.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hbg.open span:nth-child(2){opacity:0;}
+.hbg.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+
+.mob-menu{
+  display:none;position:fixed;inset:0;top:60px;
+  background:var(--bg);z-index:290;
+  flex-direction:column;padding:26px 5vw;gap:0;
+  border-top:1px solid var(--bdr);
+}
+.mob-menu.open{display:flex;}
+.mob-menu a{
+  display:block;font-size:17px;font-style:italic;
+  font-family:'Newsreader',serif;
+  color:var(--t1);padding:14px 0;border-bottom:1px solid var(--bdr);
+}
+.mob-menu a:last-child{border-bottom:none;}
+.mob-menu a.mcta{color:var(--signal-t);}
+
+@media(max-width:760px){
+  .nav-links{display:none;}
+  .hbg{display:flex;}
+}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 5vw;position:relative;z-index:1;}
+section.part{padding:84px 0;border-bottom:1px solid var(--bdr);}
+
+.rv{opacity:0;transform:translateY(14px);transition:opacity 0.55s ease,transform 0.55s ease;}
+.rv.in{opacity:1;transform:none;}
+
+.hero{padding:88px 5vw 72px;max-width:1180px;margin:0 auto;position:relative;z-index:1;border-bottom:1px solid var(--bdr);}
+.hero-eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);
+  margin-bottom:24px;
+}
+.hero-hed{
+  font-family:'Newsreader',serif;font-weight:400;font-style:italic;
+  font-size:clamp(38px,6.5vw,72px);
+  line-height:1.05;letter-spacing:-0.01em;
+  color:var(--t1);margin-bottom:20px;max-width:840px;
+}
+.hero-sub{
+  font-size:clamp(15px,1.8vw,17px);color:var(--t2);
+  max-width:580px;line-height:1.75;margin-bottom:48px;font-weight:400;
+}
+.hero-sub strong{color:var(--t1);font-weight:600;}
+
+.vis-widget{
+  background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;
+  padding:32px;margin-bottom:32px;user-select:none;-webkit-user-select:none;
+}
+
+.workflow-demo{
+  position:relative;min-height:180px;margin-bottom:24px;
+}
+
+.workflow-stage{
+  opacity:1;transform:translateY(0);transition:opacity 0.35s ease,transform 0.35s ease;
+}
+
+.workflow-stage.hidden{
+  opacity:0;transform:translateY(8px);pointer-events:none;
+  position:absolute;top:0;left:0;right:0;
+}
+
+.stage-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--signal-t);margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+}
+
+.stage-label::before{
+  content:'';display:block;width:8px;height:8px;
+  border-radius:50%;background:var(--signal);
+  box-shadow:0 0 0 4px var(--signal-dim);
+}
+
+.platform-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;background:var(--bg3);border-radius:8px;
+  margin-bottom:10px;font-size:13.5px;
+}
+
+.platform-row:last-child{margin-bottom:0;}
+
+.platform-name{
+  color:var(--t1);font-weight:600;min-width:80px;
+}
+
+.visibility-status{
+  color:var(--t2);flex:1;
+}
+
+.gap-indicator{
+  color:var(--t3);
+}
+
+.competitor-note{
+  color:var(--t3);font-size:12px;font-style:italic;
+}
+
+.platform-row.improved .visibility-status{
+  color:var(--signal-t);font-weight:600;
+}
+
+.platform-row.improved .competitor-note{
+  color:var(--signal-t);
+}
+
+.opp-list{
+  background:var(--bg3);border-radius:8px;padding:14px;
+  margin-bottom:14px;border-left:3px solid var(--signal);
+}
+
+.opp-item{
+  font-size:13.5px;color:var(--t1);
+  padding:10px 0;border-bottom:1px solid var(--bdr);
+  line-height:1.5;
+}
+
+.opp-item:last-child{border-bottom:none;padding-bottom:0;}
+
+.opp-note{
+  font-size:12px;color:var(--t3);font-style:italic;
+}
+
+.velocity-comparison{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:16px;
+}
+
+.velocity-item{
+  background:var(--bg3);border-radius:8px;padding:16px;
+  text-align:center;border:1px solid var(--bdr);
+}
+
+.velocity-item.yours{
+  border-color:rgba(29,212,191,0.3);
+  background:rgba(29,212,191,0.05);
+}
+
+.velocity-label{
+  font-size:12px;color:var(--t3);letter-spacing:0.06em;
+  text-transform:uppercase;margin-bottom:8px;
+}
+
+.iteration-count{
+  font-size:18px;font-weight:600;color:var(--signal-t);
+}
+
+.velocity-item.their .iteration-count{
+  color:var(--t3);
+}
+
+.vis-controls{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding-top:18px;border-top:1px solid var(--bdr);
+}
+
+.vis-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--t3);flex:1;
+}
+
+.workflow-nav{
+  background:transparent;border:1px solid var(--bdr);
+  border-radius:6px;padding:6px 12px;
+  cursor:pointer;color:var(--t2);font-size:11.5px;
+  font-family:'JetBrains Mono',monospace;
+  transition:all 0.15s;white-space:nowrap;
+}
+
+.workflow-nav:hover{
+  border-color:var(--bmd);color:var(--t1);
+  background:var(--bg3);
+}
+
+.workflow-nav.active{
+  background:var(--signal-dim);border-color:var(--signal);
+  color:var(--signal-t);font-weight:600;
+}
+
+.section-eye{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--signal-t);margin-bottom:28px;display:flex;align-items:center;gap:8px;
+}
+
+.section-eye::before{
+  content:'';display:block;width:14px;height:1px;background:var(--signal);
+}
+
+.section-h{
+  font-family:'Newsreader',serif;
+  font-style:italic;
+  font-size:clamp(28px,4vw,44px);
+  font-weight:400;line-height:1.15;
+  color:var(--t1);margin-bottom:28px;
+  letter-spacing:-0.01em;max-width:760px;
+}
+
+.section-sub{
+  font-size:15.5px;color:var(--t2);line-height:1.8;
+  margin-bottom:36px;max-width:700px;
+}
+
+.section-sub strong{color:var(--t1);font-weight:600;}
+
+.content-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:32px;
+  margin-bottom:32px;
+}
+
+@media(max-width:820px){
+  .content-grid{grid-template-columns:1fr;gap:24px;}
+}
+
+.content-box{
+  background:var(--bg3);border:1px solid var(--bdr);
+  border-radius:12px;padding:24px;
+}
+
+.content-box h3{
+  font-size:16px;color:var(--t1);margin-bottom:14px;
+  font-weight:600;
+}
+
+.content-box p{
+  font-size:14.5px;color:var(--t2);line-height:1.78;
+  margin-bottom:12px;
+}
+
+.content-box p:last-child{margin-bottom:0;}
+
+.content-list{
+  list-style:none;margin-top:16px;
+}
+
+.content-list li{
+  font-size:14.5px;color:var(--t2);line-height:1.75;
+  margin-bottom:10px;padding-left:20px;position:relative;
+}
+
+.content-list li:before{
+  content:'';
+  position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--signal);opacity:0.5;
+}
+
+.highlight{
+  color:var(--signal-t);font-weight:500;
+}
+
+.other-work{
+  margin-top:52px;
+}
+
+.owk-h{
+  font-family:'Newsreader',serif;
+  font-style:italic;
+  font-size:28px;font-weight:400;
+  color:var(--t1);margin-bottom:32px;
+  letter-spacing:-0.01em;
+}
+
+.owk-grid{
+  display:grid;grid-template-columns:repeat(1,1fr);gap:16px;
+}
+
+.owk-item{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:10px;padding:18px 20px;
+  transition:all 0.15s;cursor:pointer;
+}
+
+.owk-item:hover{
+  background:var(--bg3);border-color:var(--bmd);
+}
+
+.owk-info h4{
+  font-size:15px;color:var(--t1);margin-bottom:4px;
+  font-weight:600;
+}
+
+.owk-info p{
+  font-size:13px;color:var(--t3);
+}
+
+.owk-arrow{
+  font-size:20px;color:var(--t3);
+  transition:transform 0.2s;flex-shrink:0;
+}
+
+.owk-item:hover .owk-arrow{
+  transform:translateX(4px);color:var(--signal-t);
+}
+
+.footer{
+  padding:48px 5vw 42px;border-top:1px solid var(--bdr);
+  text-align:center;
+}
+
+.footer-links{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  flex-wrap:wrap;margin-bottom:20px;
+}
+
+.flink{
+  font-size:13px;color:var(--t2);
+  padding:6px 0;border-bottom:1px solid transparent;
+  transition:all 0.15s;
+}
+
+.flink:hover{
+  color:var(--t1);border-color:var(--signal);
+}
+
+.footer-note{
+  font-size:12px;color:var(--t3);
+  letter-spacing:0.02em;
+}
+
+@media(max-width:640px){
+  .hero-hed{font-size:clamp(32px,8vw,48px);margin-bottom:16px;}
+  .hero-sub{font-size:14px;margin-bottom:36px;}
+  .vis-platforms{gap:14px;}
+  .content-grid{gap:18px;}
+  section.part{padding:64px 0;}
+}
+</style>
+</head>
+<body>
+
+<div class="pbar"></div>
+
+<nav class="nav">
+  <div class="nav-i">
+    <div class="nav-brand">
+      <div class="dot"></div>
+      <b>Bhanu Kumar</b>
+      <span>Writesonic</span>
+    </div>
+    <div class="nav-links">
+      <a href="#gtm" class="np">GTM Strategy</a>
+      <a href="#launches" class="np">Launch Machine</a>
+      <a href="#sales" class="np">Sales Weapons</a>
+      <a href="#work" class="np">Other Work</a>
+      <a href="https://linkedin.com/in/bhanuexcalibur" target="_blank" class="np cta">LinkedIn</a>
+    </div>
+    <button class="hbg" id="hbg">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mob-menu" id="mobmenu">
+  <a href="#gtm">GTM Strategy</a>
+  <a href="#launches">Launch Machine</a>
+  <a href="#sales">Sales Weapons</a>
+  <a href="#work">Other Work</a>
+  <a href="https://linkedin.com/in/bhanuexcalibur" class="mcta">LinkedIn</a>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">Product Marketing Strategy</div>
+  <h1 class="hero-hed">Visibility is temporary. Execution compounds.</h1>
+  <p class="hero-sub">AI search rewards teams that iterate every week, not every quarter. Writesonic already ships at that pace. Its GTM should too.</p>
+
+  <div class="vis-widget">
+    <div class="workflow-demo">
+      <div class="workflow-stage" id="stage0">
+        <div class="stage-label">Week 1: See the Gap</div>
+        <div class="platform-row">
+          <span class="platform-name">ChatGPT</span>
+          <span class="visibility-status">Visible</span>
+          <span class="gap-indicator">·</span>
+          <span class="competitor-note">Profound also visible</span>
+        </div>
+        <div class="platform-row">
+          <span class="platform-name">Perplexity</span>
+          <span class="visibility-status">Not visible</span>
+          <span class="gap-indicator">·</span>
+          <span class="competitor-note">Profound visible here</span>
+        </div>
+        <div class="platform-row">
+          <span class="platform-name">Claude</span>
+          <span class="visibility-status">Visible</span>
+          <span class="gap-indicator">·</span>
+          <span class="competitor-note">Rank 3 vs 1</span>
+        </div>
+      </div>
+
+      <div class="workflow-stage hidden" id="stage1">
+        <div class="stage-label">Week 2: Opportunities Detected</div>
+        <div class="opp-list">
+          <div class="opp-item"><span style="color:var(--signal-t);font-weight:600;">Prompt Opportunity</span> detected in your ChatGPT visibility window</div>
+          <div class="opp-item"><span style="color:var(--signal-t);font-weight:600;">AI Overview visibility dropped 14%</span> for your top keyword cluster</div>
+          <div class="opp-item"><span style="color:var(--signal-t);font-weight:600;">Optimization recommendation generated</span> based on competitor positioning</div>
+          <div class="opp-item"><span style="color:var(--signal-t);font-weight:600;">Ready to publish.</span> One click to deploy updates</div>
+        </div>
+        <div class="opp-note">This is what Writesonic does. Detects the gaps. Recommends the fixes. Gives you the tools to ship them this week.</div>
+      </div>
+
+      <div class="workflow-stage hidden" id="stage2">
+        <div class="stage-label">Week 3: After Optimization</div>
+        <div class="platform-row improved">
+          <span class="platform-name">ChatGPT</span>
+          <span class="visibility-status">Visible</span>
+          <span class="gap-indicator">·</span>
+          <span class="competitor-note">Now rank 1</span>
+        </div>
+        <div class="platform-row improved">
+          <span class="platform-name">Perplexity</span>
+          <span class="visibility-status">Now visible</span>
+          <span class="gap-indicator">·</span>
+          <span class="competitor-note">Profound still rank 1</span>
+        </div>
+        <div class="platform-row improved">
+          <span class="platform-name">Claude</span>
+          <span class="visibility-status">Visible</span>
+          <span class="gap-indicator">·</span>
+          <span class="competitor-note">Now rank 1</span>
+        </div>
+      </div>
+
+      <div class="workflow-stage hidden" id="stage3">
+        <div class="stage-label">Week 4: The Velocity Advantage</div>
+        <div class="velocity-comparison">
+          <div class="velocity-item yours">
+            <div class="velocity-label">Your Team</div>
+            <div class="iteration-count">4 optimizations shipped</div>
+          </div>
+          <div class="velocity-item their">
+            <div class="velocity-label">Competitors</div>
+            <div class="iteration-count">In quarterly planning mode</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vis-controls">
+      <div class="vis-label">Click through the cycle</div>
+      <button class="workflow-nav prev" id="prevBtn" style="display:none;">← Back</button>
+      <button class="workflow-nav next" id="nextBtn">Next →</button>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="section-eye" id="gtm">The Thesis</div>
+    <h2 class="section-h">Competitors will catch the visibility wave. Writesonic wins by being the execution engine.</h2>
+    <p class="section-sub">AI search will become table stakes. Execution speed won't. Every vendor will eventually show visibility dashboards. Few will help teams operationalize weekly improvements. That's where Writesonic should lead. The positioning isn't "we track better." It's "we execute faster."</p>
+
+    <div class="content-grid">
+      <div class="content-box rv">
+        <h3>Why Execution Beats Visibility</h3>
+        <p>Everyone will have a visibility dashboard by 2027. What they won't have is the operational rhythm to act on it. Writesonic's advantage is its execution rhythm. Your messaging should make that the story. Not "we see more." It's "we move faster."</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>The Positioning Edge</h3>
+        <p>Position Writesonic as the brand for fast-moving teams. "For enterprises that need to iterate on AI search as fast as the channel changes." That resonates with buyers who've been burned by slow, quarterly-cadence tools. Writesonic's iteration speed becomes the selling point.</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>Competitive Context</h3>
+        <p>Competitors focus on "how much visibility you have." Writesonic focuses on "what you do about it." Some tools layer on AI recommendations. Writesonic gives you the data, the framework, and the speed to execute your own strategy. That's a much stronger story for buyers who care about control.</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>The Sales Hook</h3>
+        <p><span class="highlight">Your response:</span> "Every week you delay optimization is another week your competitors influence buying decisions inside ChatGPT and Perplexity. Writesonic lets you execute improvements in sprint cycles, not quarters. You'll move faster than companies still planning their annual roadmap."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="section-eye">The Opportunity</div>
+    <h2 class="section-h">One thing I noticed in Writesonic's launch history.</h2>
+    <p class="section-sub">You ship frequently. ChatGPT Ads monitoring, Prompt Discovery, Sentiment Analysis, Workflow automation. That's velocity. But I noticed the GTM motions around these launches vary wildly. Some get landing pages. Some get blog posts. Some get nothing. That inconsistency costs you. A buyer doesn't see a coherent narrative. They see scattered updates.</p>
+    
+    <div class="content-grid">
+      <div class="content-box rv">
+        <h3>What This Means</h3>
+        <p>You have the engineering discipline to iterate at pace. What's missing is the PMM discipline to operationalize those launches. Tier them. Create playbooks. Make it repeatable. Then your customers see you as a coherent platform. Not a collection of features.</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>The Recommendation</h3>
+        <p>Formalize your launch framework into three standardized playbooks (platform moves, product updates, iterations). Every feature gets a home in one of those tiers. Every tier has a repeatable GTM motion. Success means every release has a launch owner, launch tier, messaging brief, and customer communication within 72 hours of ship. That's how you turn iteration speed into market credibility.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="section-eye" id="launches">The Operating System</div>
+    <h2 class="section-h">Execution velocity requires standardized launches. Tier your features, run playbooks, move fast.</h2>
+    <p class="section-sub">You can't stay fast if every launch is a custom project. Tier by impact. Run predictable playbooks. This is how Writesonic maintains launch velocity without breaking the team. And it's how you as PMM actually move at the same speed as engineering.</p>
+
+    <div class="content-grid">
+      <div class="content-box rv">
+        <h3>Tier 1: Platform Moves</h3>
+        <p>New AI search platform integration. Major feature like Ads monitoring. These define Writesonic's capability level.</p>
+        <ul class="content-list">
+          <li>Landing page positioned against category pain</li>
+          <li>Blog deep dive (the "why" for CTOs and buyers)</li>
+          <li>Webinar with live product walkthrough</li>
+          <li>Sales asset: one-pager + battlecard angle</li>
+          <li>Customer email announcing capability</li>
+          <li>LinkedIn narrative post from founder</li>
+        </ul>
+        <p style="margin-top:14px;font-size:13px;color:var(--t3);border-top:1px solid var(--bdr);padding-top:12px;"><span style="color:var(--t1);font-weight:600;">Success metrics:</span> Demo requests, enterprise pipeline influence, feature adoption rate in first 30 days</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>Tier 2: Product Updates</h3>
+        <p>Speed improvements, reporting enhancements, UI polish. Real value, but not category news.</p>
+        <ul class="content-list">
+          <li>Blog post (benefit-first framing)</li>
+          <li>In-app messaging and feature highlight</li>
+          <li>Social announcement with use case</li>
+          <li>Sales one-liner for objection handling</li>
+        </ul>
+        <p style="margin-top:14px;font-size:13px;color:var(--t3);border-top:1px solid var(--bdr);padding-top:12px;"><span style="color:var(--t1);font-weight:600;">Success metrics:</span> Feature usage rate, email CTR, in-app activation, sales rep usage of one-liner</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>Tier 3: Iterations</h3>
+        <p>Bug fixes, small improvements, performance gains. Document internally, communicate minimally.</p>
+        <ul class="content-list">
+          <li>In-app notification only</li>
+          <li>Changelog entry (for documentation)</li>
+          <li>Optional: social if it's a meaningful UX win</li>
+        </ul>
+        <p style="margin-top:14px;font-size:13px;color:var(--t3);border-top:1px solid var(--bdr);padding-top:12px;"><span style="color:var(--t1);font-weight:600;">Success metrics:</span> Documentation completeness, customer support ticket reduction, internal team awareness</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>The Cadence</h3>
+        <p>Friday: Feature ships. Monday morning: Launch brief locked with messaging, positioning, and competitive angle. Tuesday: Sales deck finalized and shared. No ad hoc decisions. No retroactive messaging. This is how you stay synchronized with a weekly ship cadence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="section-eye" id="sales">Positioning for Sales</div>
+    <h2 class="section-h">Sales weapons work when they're rooted in what you actually do, not what competitors don't.</h2>
+    <p class="section-sub">The best angle isn't "we're better at X." It's "we solve your specific problem the way you want to solve it." Focus positioning on Writesonic's actual strengths: execution rhythm, transparency into what's moving the needle, and the freedom to execute your own strategy.</p>
+
+    <div class="content-grid">
+      <div class="content-box rv">
+        <h3>The Velocity Positioning</h3>
+        <p><span class="highlight">When buyers say:</span> "Our GEO strategy is still being planned."</p>
+        <p><span class="highlight">Your response:</span> "Most competitors will spend Q2 planning, Q3 building, Q4 measuring. By then, the market has moved. Writesonic is different. Weekly releases mean you iterate on your strategy every sprint. Feedback loops close in days, not months."</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>The Transparency Positioning</h3>
+        <p><span class="highlight">When buyers say:</span> "How do we know GEO is actually moving the needle?"</p>
+        <p><span class="highlight">Your response:</span> "Writesonic gives you the data to see exactly which keywords and platforms move pipeline. No black boxes. No 'trust our AI.' You see what's working, and you change it the next week. Most tools hide the math. We show it."</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>The Control Positioning</h3>
+        <p><span class="highlight">When buyers say:</span> "We have a specific GEO strategy we want to execute."</p>
+        <p><span class="highlight">Your response:</span> "Writesonic is built for that. We give you the visibility layer and the execution layer. You decide the strategy. We make sure you can iterate on it every release cycle without waiting for tool updates."</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>The ROI Conversation</h3>
+        <p>Start here: "What percentage of your current pipeline is influenced by AI search?" (Usually 8-12% based on industry data.) Then: "If we improve that by 3-5 points, what does that represent in ARR for your business?" Let them calculate the upside. Their number becomes your proof point.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="section-eye">Lifecycle Strategy</div>
+    <h2 class="section-h">Conversion is messaging, not UI.</h2>
+    <p class="section-sub">Your trial users are exploring visibility. They get scared by the dashboard complexity. The fix is not a simpler dashboard. It is messaging that explains why complexity is a good signal (more data means more insight). Your copy turns confusion into confidence.</p>
+
+    <div class="content-grid">
+      <div class="content-box rv">
+        <h3>Day 1: The Onboarding Email</h3>
+        <p>Don't explain features. Explain promise. "You just connected your brand to four AI search platforms. This is where it matters now. Let's check your visibility baseline."</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>Day 3: Aha Moment Nudge</h3>
+        <p>User sees their visibility spread. "Your competitors are already showing up for this prompt. Here is how to beat them." Action-oriented. Immediate sense of urgency.</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>Day 7: Feature Unlock</h3>
+        <p>In-app banner highlighting their second best channel. "Perplexity is actually your biggest opportunity right now." Single insight, single action.</p>
+      </div>
+
+      <div class="content-box rv">
+        <h3>Trial-to-Paid Hook</h3>
+        <p>Don't ask them to upgrade. Show them the competitive intelligence they are missing. "Profound just showed up for your top 12 keywords. You can't see it without the Pro plan."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="other-work">
+      <h2 class="owk-h">Other Relevant Work</h2>
+      <div class="owk-grid">
+        <a href="https://bhanuexcalibur.github.io/ReoDev/" target="_blank" class="owk-item rv">
+          <div class="owk-info">
+            <h4>Reo.Dev</h4>
+            <p>Revenue intelligence platform. Competitive positioning and GTM strategy for developer tools.</p>
+          </div>
+          <div class="owk-arrow">→</div>
+        </a>
+
+        <a href="https://bhanuexcalibur.github.io/Stripe/" target="_blank" class="owk-item rv">
+          <div class="owk-info">
+            <h4>Stripe</h4>
+            <p>Pricing narrative and messaging audit for a payments platform.</p>
+          </div>
+          <div class="owk-arrow">→</div>
+        </a>
+
+        <a href="https://bhanuexcalibur.github.io/Veeva/" target="_blank" class="owk-item rv">
+          <div class="owk-info">
+            <h4>Veeva</h4>
+            <p>Enterprise software positioning and GTM strategy for life sciences buyers.</p>
+          </div>
+          <div class="owk-arrow">→</div>
+        </a>
+
+        <a href="https://bhanuexcalibur.github.io/Lifesight/" target="_blank" class="owk-item rv">
+          <div class="owk-info">
+            <h4>Lifesight</h4>
+            <p>Attribution and measurement platform. Positioning for data-driven marketers.</p>
+          </div>
+          <div class="owk-arrow">→</div>
+        </a>
+
+        <a href="https://bhanuexcalibur.github.io/Canonical/" target="_blank" class="owk-item rv">
+          <div class="owk-info">
+            <h4>Canonical</h4>
+            <p>Messaging audit and positioning strategy for enterprise open source.</p>
+          </div>
+          <div class="owk-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="https://linkedin.com/in/bhanuexcalibur" target="_blank" class="flink">LinkedIn</a>
+    <span style="color:var(--t3);">·</span>
+    <a href="https://drive.google.com/file/d/1YsfpqV-O5qp9iuPT1QhwTRC_nDtQAnYW/view" target="_blank" class="flink">Resume</a>
+    <span style="color:var(--t3);">·</span>
+    <a href="mailto:bhanukumar0902@gmail.com" class="flink">Email</a>
+  </div>
+  <div class="footer-note">Bhanu Kumar (Excalibur) · Product Marketing Strategy</div>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const pct=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+  document.querySelector('.pbar').style.width=(pct*100)+'%';
+});
+
+// Hamburger menu
+const hbg=document.getElementById('hbg');
+const mobmenu=document.getElementById('mobmenu');
+hbg.addEventListener('click',()=>{
+  hbg.classList.toggle('open');
+  mobmenu.classList.toggle('open');
+});
+mobmenu.querySelectorAll('a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    hbg.classList.remove('open');
+    mobmenu.classList.remove('open');
+  });
+});
+
+// Workflow widget navigation
+const nextBtn=document.getElementById('nextBtn');
+const prevBtn=document.getElementById('prevBtn');
+const stages=document.querySelectorAll('.workflow-stage');
+let currentStage=0;
+let autoDemoRan=false;
+
+function showStage(idx){
+  stages.forEach((s,i)=>{
+    s.classList.toggle('hidden',i!==idx);
+  });
+  currentStage=idx;
+  
+  prevBtn.style.display=idx>0?'block':'none';
+  nextBtn.style.display=idx<stages.length-1?'block':'none';
+  
+  if(idx===stages.length-1){
+    nextBtn.textContent='Start Over';
+    nextBtn.onclick=()=>showStage(0);
+  }else{
+    nextBtn.textContent='Next →';
+    nextBtn.onclick=()=>showStage(idx+1);
+  }
+}
+
+prevBtn.addEventListener('click',()=>showStage(currentStage-1));
+nextBtn.addEventListener('click',()=>showStage(currentStage+1));
+
+// Auto-demo: advance through stages on load
+function autoDemo(){
+  if(!autoDemoRan){
+    autoDemoRan=true;
+    let demoStage=0;
+    const demoInterval=setInterval(()=>{
+      showStage(demoStage);
+      demoStage++;
+      if(demoStage>=stages.length){
+        clearInterval(demoInterval);
+      }
+    },2000);
+  }
+}
+
+// Trigger auto-demo when hero comes into view
+const heroObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      autoDemo();
+      heroObserver.unobserve(entry.target);
+    }
+  });
+},{threshold:0.3});
+
+const heroElem=document.querySelector('.hero');
+if(heroElem){
+  heroObserver.observe(heroElem);
+}
+
+setTimeout(autoDemo,150);
+
+// Reveal animation on scroll
+const revealObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('in');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+},{threshold:0.1});
+
+document.querySelectorAll('.rv').forEach(el=>{
+  revealObserver.observe(el);
+});
+</script>
+
+</body>
+</html>
